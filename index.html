@@ -257,11 +257,7 @@
   confirmButtonText: "Yes"
 }).then((result) => {
   if (result.isConfirmed) {
-    Swal.fire({
-      title: "Deleted!",
-      text: "You have Quitted the Game",
-      icon: "success"
-    });
+
     window.location.reload();
   }
 });
