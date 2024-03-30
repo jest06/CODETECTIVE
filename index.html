@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CODETECTIVE</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: whitesmoke;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .container {
+    width: 300px;
+    padding: 20px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+    box-shadow: 8px 8px 8px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  button {
+    display: block;
+    width: calc(100% - 22px);
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid whitesmoke;
+    box-sizing: border-box;
+  }
+
+  button {
+    background-color: #7d0caa;
+    color: whitesmoke;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #7d0caa;
+  }
+
+  #loginForm,
+  #signupForm,
+  #gameArea,
+  #mainMenu,
+  #levelMenu {
+    display: none;
+  }
+
+  #splashScreen {
+    text-align: center;
+  }
+
+  #splashContent h1 {
+    font-size: 2.80em;
+    margin-bottom: 20px;
+    color: #7d0caa;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
+
+  #splashContent p {
+    font-size: 1.2em;
+    color: #000000;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  }
+
+  #mainMenu.active,
+  #levelMenu.active {
+    display: block;
+  }
+
+</style>
+</head>
+<body>
+
+<div id="splashScreen">
+  <div id="splashContent">
+    <h1>CODETECTIVE</h1>
+    <p>Loading...</p>
+  </div>
+</div>
+
+<div class="container" id="loginForm">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p>Don't have an account? <a href="#" onclick="showSignupForm()">Sign up</a></p>
+</div>
+
+<div class="container" id="signupForm">
+  <h2>Sign Up</h2>
+  <input type="text" id="newUsername" placeholder="New Username">
+  <input type="password" id="newPassword" placeholder="New Password">
+  <button onclick="signup()">Sign Up</button>
+  <p>Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
+</div>
+
+<div class="container" id="mainMenu">
+  <h2>Main Menu</h2>
+  <button onclick="showLevelMenu()">Start</button>
+  <button onclick="openSettings()">Settings</button>
+  <button onclick="viewAchievements()">Achievements</button>
+  <button onclick="quitGame()">Quit</button>
+</div>
+
+<div class="container" id="levelMenu">
+  <h2>Select Difficulty</h2>
+  <button onclick="startGame('easy')">Easy</button>
+  <button onclick="startGame('medium')">Medium</button>
+  <button onclick="startGame('hard')">Hard</button>
+  <button onclick="backToMainMenu()">Back</button>
+</div>
+
+<div class="container" id="gameArea">
+  <h2>Game Area</h2>
+  <!-- Your game content goes here -->
+  <p>Welcome to the game!</p>
+</div>
+
+<script>
+    // Simulate loading process
+    setTimeout(function() {
+      document.getElementById("splashScreen").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+    }, 3000); // Simulating a 3-second loading time
+  
+    function login() {
+      var username = document.getElementById("username").value;
+      var password = document.getElementById("password").value;
+      
+      // Retrieve stored user data
+      var storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+      var user = storedUsers.find(u => u.username === username && u.password === password);
+      
+      if (user) { 
+        // Hide the login form
+        document.getElementById("loginForm").style.display = "none";
+        // Show the main menu after successful login
+        document.getElementById("mainMenu").classList.add("active");
+        // Optionally, you can redirect to another page
+        Swal.fire({
+  position: "center",
+  icon: "success",
+  title: "You have successfully login",
+  showConfirmButton: false,
+  timer: 1500
+  
+});
+      }
+       else {
+        Swal.fire({
+  title: "Invalid username or password!",
+  icon: "error"
+});
+      
+      }
+    }
+  
+    function signup() {
+      var newUsername = document.getElementById("newUsername").value;
+      var newPassword = document.getElementById("newPassword").value;
+      
+      if (newUsername && newPassword) {
+        // Retrieve stored user data
+        var storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+        
+        // Check if username already exists
+        if (storedUsers.some(u => u.username === newUsername)) {
+          Swal.fire({
+  title: "Username already exists. Please choose a different one.",
+  icon: "warning",
+  confirmButtonText: "Retry"
+});
+       
+          return;
+        }
+        
+        // Add new user
+        storedUsers.push({ username: newUsername, password: newPassword });
+        localStorage.setItem('users', JSON.stringify(storedUsers));
+        Swal.fire({
+  position: "center",
+  icon: "success",
+  title: "Signup successful! You can now log in.",
+  showConfirmButton: false,
+  timer: 1500
+});
+        // Redirect to login form after signing up
+        showLoginForm();
+      } else {
+        Swal.fire({
+  title: "Please Enter Username or Password",
+  icon: "warning"
+});
+      }
+    }
+  
+    function showSignupForm() {
+      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("signupForm").style.display = "block";
+    }
+  
+    function showLoginForm() {
+      document.getElementById("signupForm").style.display = "none";
+      document.getElementById("loginForm").style.display = "block";
+    }
+
+    function showLevelMenu() {
+      document.getElementById("mainMenu").style.display = "none";
+      document.getElementById("levelMenu").classList.add("active");
+    }
+
+    function startGame(difficulty) {
+      alert("Starting game with difficulty: " + difficulty);
+      // Implement the game based on the selected difficulty
+    }
+
+    function openSettings() {
+      // Implement open settings functionality
+      alert("Opening settings...");
+    }
+
+    function viewAchievements() {
+      // Implement view achievements functionality
+      alert("Viewing achievements...");
+    }
+
+    function quitGame() {
+      // Implement quit game functionality
+      alert("Quitting game...");
+    }
+
+    function backToMainMenu() {
+      document.getElementById("levelMenu").classList.remove("active");
+      document.getElementById("mainMenu").style.display = "block";
+    }
+
+    function quitGame() {
+    // Confirm with the user before quitting
+    Swal.fire({
+  title: "Are you sure you want to quit the game?",
+  icon: "question",
+  showCancelButton: true,
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Yes"
+}).then((result) => {
+  if (result.isConfirmed) {
+    Swal.fire({
+      title: "Deleted!",
+      text: "You have Quitted the Game",
+      icon: "success"
+    });
+    window.location.reload();
+  }
+});
+  
+}
+
+
+
+</script>
+</body>
+</html>
